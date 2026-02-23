@@ -193,12 +193,21 @@ Configured via environment variables:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `TRACK_CLAUDE_LLM_PROVIDER` | `anthropic` | `anthropic` or `openai` |
-| `TRACK_CLAUDE_LLM_URL` | depends on provider | API endpoint URL |
 | `TRACK_CLAUDE_LLM_API_KEY` | — | API key (required for Anthropic) |
-| `TRACK_CLAUDE_LLM_MODEL` | `claude-3-5-haiku-20241022` | Model |
-| `ANTHROPIC_AUTH_TOKEN` | — | Alternative key for Anthropic |
-| `ANTHROPIC_BASE_URL` | `https://api.z.ai/api/anthropic` | Base URL for Anthropic |
+| `TRACK_CLAUDE_LLM_PROVIDER` | `anthropic` | `anthropic` or `openai` (for Ollama/LM Studio/vLLM) |
+| `TRACK_CLAUDE_LLM_MODEL` | `claude-3-5-haiku-20241022` | Model name |
+| `TRACK_CLAUDE_LLM_URL` | auto | Full endpoint URL (usually not needed) |
+| `ANTHROPIC_AUTH_TOKEN` | — | Fallback API key for Anthropic |
+| `ANTHROPIC_BASE_URL` | `https://api.z.ai/api/anthropic` | Base URL for Anthropic (appends `/v1/messages`) |
+
+> **Note:** `TRACK_CLAUDE_LLM_URL` is the **full endpoint URL** (e.g. `https://api.z.ai/api/anthropic/v1/messages`), not a base URL. In most cases you don't need to set it — the correct URL is auto-constructed from `ANTHROPIC_BASE_URL` + `/v1/messages`. Setting it to a base URL without the path will cause "Unexpected Anthropic response format" errors.
+
+**Example with Anthropic (simplest):**
+
+```bash
+export TRACK_CLAUDE_LLM_API_KEY=sk-ant-...
+devboy-agent-usage tasks --from 2026-02-20 --with-llm
+```
 
 **Example with Ollama (local, free):**
 
@@ -206,12 +215,7 @@ Configured via environment variables:
 export TRACK_CLAUDE_LLM_PROVIDER=openai
 export TRACK_CLAUDE_LLM_URL=http://localhost:11434/v1/chat/completions
 export TRACK_CLAUDE_LLM_MODEL=qwen2.5:7b
-```
-
-**Example with Anthropic:**
-
-```bash
-export TRACK_CLAUDE_LLM_API_KEY=sk-ant-...
+devboy-agent-usage tasks --from 2026-02-20 --with-llm
 ```
 
 ### Cache

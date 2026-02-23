@@ -106,10 +106,42 @@ devboy-agent-usage tasks --from 2026-02-20 --format json
 devboy-agent-usage cost --from 2026-02-01 --format csv
 ```
 
+## LLM configuration (--with-llm)
+
+Requires one of:
+
+Anthropic (only API key needed, URL auto-configured):
+```bash
+export TRACK_CLAUDE_LLM_API_KEY=sk-ant-...
+```
+
+Ollama / local LLM (free):
+```bash
+export TRACK_CLAUDE_LLM_PROVIDER=openai
+export TRACK_CLAUDE_LLM_URL=http://localhost:11434/v1/chat/completions
+export TRACK_CLAUDE_LLM_MODEL=qwen2.5:7b
+```
+
+All env vars:
+- `TRACK_CLAUDE_LLM_API_KEY` — API key (required for Anthropic)
+- `TRACK_CLAUDE_LLM_PROVIDER` — `anthropic` (default) or `openai`
+- `TRACK_CLAUDE_LLM_MODEL` — model name (default: `claude-3-5-haiku-20241022`)
+- `TRACK_CLAUDE_LLM_URL` — full endpoint URL (usually not needed, auto-constructed)
+
+Results are cached in SQLite — repeated runs don't spend tokens on already processed tasks.
+
+## ActivityWatch (--with-aw)
+
+ActivityWatch is auto-detected if installed:
+- macOS: `~/Library/Application Support/activitywatch/aw-server/peewee-sqlite.v2.db`
+- Linux: `~/.local/share/activitywatch/aw-server/peewee-sqlite.v2.db`
+
+No configuration needed — just install and run ActivityWatch.
+
 ## Tips
 
 - Dates use `YYYY-MM-DD` format: `--from 2026-02-20 --to 2026-02-23`
-- `--with-llm` requires LLM API configured (env vars `TRACK_CLAUDE_LLM_*`)
+- `--with-llm` requires LLM API configured (see above)
 - `--with-aw` requires ActivityWatch running
 - Use `--format json` when you need to process the output programmatically
 - `--sort recent` is useful to see what was worked on last
