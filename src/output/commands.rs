@@ -6,6 +6,7 @@ use chrono::{DateTime, Datelike, NaiveDate, Utc};
 use indicatif::{ProgressBar, ProgressStyle};
 
 use crate::activity::db;
+use crate::activity::transform;
 use crate::claude::parser;
 use crate::claude::session::{self, AggregatedUsage, ClaudeSession};
 use crate::cli::{Agent, GroupBy, OutputFormat, TaskSortBy};
@@ -237,20 +238,22 @@ pub fn session(
 
     // Собираем per-turn focus если есть AW
     let turn_focus = if correlate && config.has_activitywatch() {
-        let window_events = db::load_window_events(
+        let raw_window = db::load_window_events(
             &config.activitywatch_db_path,
             Some(session.start_time),
             Some(session.end_time),
         )?;
-        let afk_events = db::load_afk_events(
+        let raw_afk = db::load_afk_events(
             &config.activitywatch_db_path,
             Some(session.start_time),
             Some(session.end_time),
         )?;
 
-        if window_events.is_empty() {
+        if raw_window.is_empty() {
             None
         } else {
+            let window_events = transform::flood_window(raw_window, transform::DEFAULT_PULSETIME);
+            let afk_events = transform::flood_afk(raw_afk, transform::DEFAULT_PULSETIME);
             let session_clone = clone_session_for_correlation(session);
             Some(engine::collect_per_turn_focus(
                 &session_clone,
@@ -331,11 +334,13 @@ pub fn focus(
     let from_dt = filtered.iter().map(|s| s.start_time).min().unwrap();
     let to_dt = filtered.iter().map(|s| s.end_time).max().unwrap();
 
-    // Загружаем ActivityWatch данные один раз
-    let window_events =
+    // Загружаем ActivityWatch данные один раз и flood
+    let raw_window =
         db::load_window_events(&config.activitywatch_db_path, Some(from_dt), Some(to_dt))?;
-    let afk_events =
+    let raw_afk =
         db::load_afk_events(&config.activitywatch_db_path, Some(from_dt), Some(to_dt))?;
+    let window_events = transform::flood_window(raw_window, transform::DEFAULT_PULSETIME);
+    let afk_events = transform::flood_afk(raw_afk, transform::DEFAULT_PULSETIME);
 
     // Коррелируем каждую сессию
     let mut correlated_sessions = Vec::new();
@@ -441,8 +446,10 @@ pub fn timeline(config: &Config, id: &str) -> Result<()> {
     let to_dt = sorted_sessions.iter().map(|s| s.end_time).max().unwrap();
 
     let (window_events, afk_events) = if config.has_activitywatch() {
-        let w = db::load_window_events(&config.activitywatch_db_path, Some(from_dt), Some(to_dt))?;
-        let a = db::load_afk_events(&config.activitywatch_db_path, Some(from_dt), Some(to_dt))?;
+        let raw_w = db::load_window_events(&config.activitywatch_db_path, Some(from_dt), Some(to_dt))?;
+        let raw_a = db::load_afk_events(&config.activitywatch_db_path, Some(from_dt), Some(to_dt))?;
+        let w = transform::flood_window(raw_w, transform::DEFAULT_PULSETIME);
+        let a = transform::flood_afk(raw_a, transform::DEFAULT_PULSETIME);
         (w, a)
     } else {
         (Vec::new(), Vec::new())
@@ -518,30 +525,34 @@ pub fn browse(config: &Config, session_id: &str, format: &OutputFormat) -> Resul
     };
 
     // Загружаем window events и AFK events за время сессии
-    let window_events = db::load_window_events(
+    let raw_window = db::load_window_events(
         &config.activitywatch_db_path,
         Some(session.start_time),
         Some(session.end_time),
     )?;
-    let afk_events = db::load_afk_events(
+    let raw_afk = db::load_afk_events(
         &config.activitywatch_db_path,
         Some(session.start_time),
         Some(session.end_time),
     )?;
 
-    if window_events.is_empty() {
+    if raw_window.is_empty() {
         println!("No ActivityWatch data found for this session's time range.");
         return Ok(());
     }
 
-    // Собираем browse stats
-    let browse_stats =
-        engine::collect_browse_stats(&window_events, session.start_time, session.end_time);
+    // Flood + filter_period_intersect pipeline
+    let (active_window, flooded_window, flooded_afk) =
+        transform::preprocess_active_window_events(raw_window, raw_afk, transform::DEFAULT_PULSETIME);
 
-    // Собираем terminal focus stats
+    // Browse stats: только активное время (пересечение с not-afk)
+    let browse_stats =
+        engine::collect_browse_stats(&active_window, session.start_time, session.end_time);
+
+    // Terminal focus stats: flooded данные (обрабатывает AFK самостоятельно)
     let session_clone = clone_session_for_correlation(session);
     let terminal_stats =
-        engine::collect_terminal_focus_stats(&session_clone, &window_events, &afk_events);
+        engine::collect_terminal_focus_stats(&session_clone, &flooded_window, &flooded_afk);
 
     match format {
         OutputFormat::Table => table::browse_table(session, &browse_stats, &terminal_stats),
@@ -591,7 +602,9 @@ pub fn tasks(
 
         let w = db::load_window_events(&config.activitywatch_db_path, Some(from_dt), Some(to_dt))?;
         let a = db::load_afk_events(&config.activitywatch_db_path, Some(from_dt), Some(to_dt))?;
-        (Some(w), Some(a))
+        let flooded_w = transform::flood_window(w, transform::DEFAULT_PULSETIME);
+        let flooded_a = transform::flood_afk(a, transform::DEFAULT_PULSETIME);
+        (Some(flooded_w), Some(flooded_a))
     } else {
         if with_aw && !config.has_activitywatch() {
             eprintln!(
