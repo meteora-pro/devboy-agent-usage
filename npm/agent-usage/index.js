@@ -9,7 +9,7 @@ exports.name = pkg.name;
 exports.version = pkg.version;
 
 /**
- * Resolves the path to the devboy-agent-usage binary.
+ * Resolves the path to the devboy-tools-agent-usage binary.
  *
  * Resolution order:
  * 1. DEVBOY_AGENT_USAGE_BINARY_PATH environment variable
@@ -33,7 +33,7 @@ exports.getBinaryPath = function getBinaryPath() {
   // 2. Resolve from platform-specific package
   const platformPkg = `@devboy-tools/agent-usage-${process.platform}-${process.arch}`;
   const ext = process.platform === "win32" ? ".exe" : "";
-  const binaryName = `devboy-agent-usage${ext}`;
+  const binaryName = `devboy-tools-agent-usage${ext}`;
 
   try {
     const pkgJsonPath = require.resolve(`${platformPkg}/package.json`);
@@ -46,9 +46,9 @@ exports.getBinaryPath = function getBinaryPath() {
   }
 
   throw new Error(
-    `devboy-agent-usage binary not found. No package ${platformPkg} installed.\n` +
+    `devboy-tools-agent-usage binary not found. No package ${platformPkg} installed.\n` +
       "Your platform might not be supported. " +
       "Set DEVBOY_AGENT_USAGE_BINARY_PATH to point to a binary, or install from source:\n" +
-      "  cargo install --git https://github.com/meteora-pro/devboy-agent-usage.git",
+      "  cargo install --git https://github.com/meteora-pro/devboy-tools-agent-usage.git",
   );
 };

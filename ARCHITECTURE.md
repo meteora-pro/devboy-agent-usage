@@ -1,4 +1,4 @@
-# Architecture — devboy-agent-usage
+# Architecture — devboy-tools-agent-usage
 
 ## Overview
 

@@ -863,25 +863,25 @@ fn agent_skill_path(agent: &Agent, global: bool) -> Result<PathBuf> {
                 Ok(home
                     .join(".claude")
                     .join("skills")
-                    .join("devboy-agent-usage")
+                    .join("devboy-tools-agent-usage")
                     .join("SKILL.md"))
             } else {
                 Ok(PathBuf::from(".claude")
                     .join("skills")
-                    .join("devboy-agent-usage")
+                    .join("devboy-tools-agent-usage")
                     .join("SKILL.md"))
             }
         }
         Agent::Cursor => Ok(PathBuf::from(".cursor")
             .join("rules")
-            .join("devboy-agent-usage.mdc")),
+            .join("devboy-tools-agent-usage.mdc")),
         Agent::Windsurf => Ok(PathBuf::from(".windsurf")
             .join("rules")
-            .join("devboy-agent-usage.md")),
-        Agent::Cline => Ok(PathBuf::from(".clinerules").join("devboy-agent-usage.md")),
+            .join("devboy-tools-agent-usage.md")),
+        Agent::Cline => Ok(PathBuf::from(".clinerules").join("devboy-tools-agent-usage.md")),
         Agent::Copilot => Ok(PathBuf::from(".github")
             .join("instructions")
-            .join("devboy-agent-usage.instructions.md")),
+            .join("devboy-tools-agent-usage.instructions.md")),
     }
 }
 

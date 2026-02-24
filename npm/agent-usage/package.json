@@ -5,10 +5,10 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/meteora-pro/devboy-agent-usage.git"
+    "url": "https://github.com/meteora-pro/devboy-tools-agent-usage.git"
   },
   "bin": {
-    "devboy-agent-usage": "bin/agent-usage.js"
+    "devboy-tools-agent-usage": "bin/agent-usage.js"
   },
   "main": "index.js",
   "types": "index.d.ts",

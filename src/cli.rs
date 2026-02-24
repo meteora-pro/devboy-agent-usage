@@ -2,7 +2,7 @@ use clap::{Parser, Subcommand, ValueEnum};
 
 #[derive(Parser)]
 #[command(
-    name = "devboy-agent-usage",
+    name = "devboy-tools-agent-usage",
     version,
     about = "Анализ использования AI-агентов (Claude Code) с корреляцией ActivityWatch"
 )]

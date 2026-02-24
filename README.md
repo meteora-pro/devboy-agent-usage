@@ -1,4 +1,4 @@
-# devboy-agent-usage
+# devboy-tools-agent-usage
 
 CLI tool for analyzing AI agent usage (Claude Code): cost, time, tasks, focus.
 
@@ -28,12 +28,12 @@ pnpm add -g @devboy-tools/agent-usage
 ### From source
 
 ```bash
-git clone https://github.com/meteora-pro/devboy-agent-usage.git
-cd devboy-agent-usage
+git clone https://github.com/meteora-pro/devboy-tools-agent-usage.git
+cd devboy-tools-agent-usage
 cargo build --release
 ```
 
-Binary: `target/release/devboy-agent-usage`
+Binary: `target/release/devboy-tools-agent-usage`
 
 ### Requirements
 
@@ -45,22 +45,22 @@ Binary: `target/release/devboy-agent-usage`
 
 ```bash
 # Summary for today
-devboy-agent-usage summary --from 2026-02-23
+devboy-tools-agent-usage summary --from 2026-02-23
 
 # Tasks for the week
-devboy-agent-usage tasks --from 2026-02-17 --to 2026-02-23
+devboy-tools-agent-usage tasks --from 2026-02-17 --to 2026-02-23
 
 # Tasks with LLM summarization and ActivityWatch
-devboy-agent-usage tasks --from 2026-02-20 --with-llm --with-aw
+devboy-tools-agent-usage tasks --from 2026-02-20 --with-llm --with-aw
 
 # Cost by day
-devboy-agent-usage cost --from 2026-02-01 --group-by day
+devboy-tools-agent-usage cost --from 2026-02-01 --group-by day
 
 # Session details
-devboy-agent-usage session abc12345
+devboy-tools-agent-usage session abc12345
 
 # JSON for integrations
-devboy-agent-usage tasks --from 2026-02-20 --format json
+devboy-tools-agent-usage tasks --from 2026-02-20 --format json
 ```
 
 ## Commands
@@ -68,7 +68,7 @@ devboy-agent-usage tasks --from 2026-02-20 --format json
 ### `summary` — Overview
 
 ```bash
-devboy-agent-usage summary [--project NAME] [--from DATE] [--to DATE] [-f table|json|csv]
+devboy-tools-agent-usage summary [--project NAME] [--from DATE] [--to DATE] [-f table|json|csv]
 ```
 
 Outputs: session count, turns, duration, tokens (in/out/cache), cost.
@@ -76,7 +76,7 @@ Outputs: session count, turns, duration, tokens (in/out/cache), cost.
 ### `sessions` — List Sessions
 
 ```bash
-devboy-agent-usage sessions [--project NAME] [--from DATE] [--to DATE] [-l LIMIT] [-f FORMAT]
+devboy-tools-agent-usage sessions [--project NAME] [--from DATE] [--to DATE] [-l LIMIT] [-f FORMAT]
 ```
 
 | Flag | Default | Description |
@@ -86,7 +86,7 @@ devboy-agent-usage sessions [--project NAME] [--from DATE] [--to DATE] [-l LIMIT
 ### `session <ID>` — Session Details
 
 ```bash
-devboy-agent-usage session <SESSION_ID> [--with-llm] [-f FORMAT]
+devboy-tools-agent-usage session <SESSION_ID> [--with-llm] [-f FORMAT]
 ```
 
 Shows turn-by-turn: time, model, tool calls, tokens, cost. With `--with-llm` adds chunk summaries between groups of 30 turns. With `--correlate` (enabled by default) shows user focus on each turn.
@@ -94,13 +94,13 @@ Shows turn-by-turn: time, model, tool calls, tokens, cost. With `--with-llm` add
 ### `projects` — List Projects
 
 ```bash
-devboy-agent-usage projects [-f FORMAT]
+devboy-tools-agent-usage projects [-f FORMAT]
 ```
 
 ### `tasks` — Group by Tasks
 
 ```bash
-devboy-agent-usage tasks [--project NAME] [--from DATE] [--to DATE] \
+devboy-tools-agent-usage tasks [--project NAME] [--from DATE] [--to DATE] \
     [--with-aw] [--with-llm] [--sort cost|time|sessions|recent] [-f FORMAT]
 ```
 
@@ -131,7 +131,7 @@ Tool categories:
 ### `timeline <ID>` — Detailed Timeline
 
 ```bash
-devboy-agent-usage timeline <TASK_ID_OR_SESSION_UUID>
+devboy-tools-agent-usage timeline <TASK_ID_OR_SESSION_UUID>
 ```
 
 Shows per-turn table with context size, tool call details, focus info, and compaction events. Accepts task IDs (e.g. `DEV-570`), session UUIDs, or substrings. For tasks with multiple sessions, displays a session chain with gap detection.
@@ -139,7 +139,7 @@ Shows per-turn table with context size, tool call details, focus info, and compa
 ### `retitle` — Manual Task Title
 
 ```bash
-devboy-agent-usage retitle DEV-531 "Multi-project JIRA support"
+devboy-tools-agent-usage retitle DEV-531 "Multi-project JIRA support"
 ```
 
 Title priority: manual (retitle) > LLM > none.
@@ -147,7 +147,7 @@ Title priority: manual (retitle) > LLM > none.
 ### `reclassify` — Re-summarize
 
 ```bash
-devboy-agent-usage reclassify --from 2026-02-20 --to 2026-02-23 [--project NAME]
+devboy-tools-agent-usage reclassify --from 2026-02-20 --to 2026-02-23 [--project NAME]
 ```
 
 Clears summarization cache for matching tasks. Then run `tasks --with-llm` to re-summarize.
@@ -155,14 +155,14 @@ Clears summarization cache for matching tasks. Then run `tasks --with-llm` to re
 ### `cost` — Cost Report
 
 ```bash
-devboy-agent-usage cost [--project NAME] [--from DATE] [--to DATE] \
+devboy-tools-agent-usage cost [--project NAME] [--from DATE] [--to DATE] \
     [--group-by day|week|month|session] [-f FORMAT]
 ```
 
 ### `focus` — Focus Analysis
 
 ```bash
-devboy-agent-usage focus [--project NAME] [--from DATE] [--to DATE] [-f FORMAT]
+devboy-tools-agent-usage focus [--project NAME] [--from DATE] [--to DATE] [-f FORMAT]
 ```
 
 Requires ActivityWatch. Shows: processing time, thinking time, focus %, top apps.
@@ -170,7 +170,7 @@ Requires ActivityWatch. Shows: processing time, thinking time, focus %, top apps
 ### `browse <ID>` — Browser Analysis
 
 ```bash
-devboy-agent-usage browse <SESSION_ID> [-f FORMAT]
+devboy-tools-agent-usage browse <SESSION_ID> [-f FORMAT]
 ```
 
 Requires ActivityWatch. Shows visited pages, categories (GitLab, GitHub, ClickUp, Social, ...), work-related percentage.
@@ -206,7 +206,7 @@ Configured via environment variables:
 
 ```bash
 export TRACK_CLAUDE_LLM_API_KEY=sk-ant-...
-devboy-agent-usage tasks --from 2026-02-20 --with-llm
+devboy-tools-agent-usage tasks --from 2026-02-20 --with-llm
 ```
 
 **Example with Ollama (local, free):**
@@ -215,14 +215,14 @@ devboy-agent-usage tasks --from 2026-02-20 --with-llm
 export TRACK_CLAUDE_LLM_PROVIDER=openai
 export TRACK_CLAUDE_LLM_URL=http://localhost:11434/v1/chat/completions
 export TRACK_CLAUDE_LLM_MODEL=qwen2.5:7b
-devboy-agent-usage tasks --from 2026-02-20 --with-llm
+devboy-tools-agent-usage tasks --from 2026-02-20 --with-llm
 ```
 
 ### Cache
 
 Classification and summarization results are cached in SQLite:
-- macOS: `~/Library/Caches/devboy-agent-usage/classifications.db`
-- Linux: `~/.cache/devboy-agent-usage/classifications.db`
+- macOS: `~/Library/Caches/devboy-tools-agent-usage/classifications.db`
+- Linux: `~/.cache/devboy-tools-agent-usage/classifications.db`
 
 Cache auto-invalidates when data changes (new turns, different hash). Manual reset — `reclassify` command.
 

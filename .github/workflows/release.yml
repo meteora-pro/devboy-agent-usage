@@ -8,7 +8,7 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
-  BINARY_NAME: devboy-agent-usage
+  BINARY_NAME: devboy-tools-agent-usage
 
 jobs:
   # Check if version changed — skip release if not
@@ -52,24 +52,24 @@ jobs:
         include:
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
-            artifact_name: devboy-agent-usage
-            asset_name: devboy-agent-usage-linux-x86_64
+            artifact_name: devboy-tools-agent-usage
+            asset_name: devboy-tools-agent-usage-linux-x86_64
           - os: ubuntu-24.04-arm
             target: aarch64-unknown-linux-gnu
-            artifact_name: devboy-agent-usage
-            asset_name: devboy-agent-usage-linux-arm64
+            artifact_name: devboy-tools-agent-usage
+            asset_name: devboy-tools-agent-usage-linux-arm64
           - os: macos-latest
             target: x86_64-apple-darwin
-            artifact_name: devboy-agent-usage
-            asset_name: devboy-agent-usage-macos-x86_64
+            artifact_name: devboy-tools-agent-usage
+            asset_name: devboy-tools-agent-usage-macos-x86_64
           - os: macos-latest
             target: aarch64-apple-darwin
-            artifact_name: devboy-agent-usage
-            asset_name: devboy-agent-usage-macos-arm64
+            artifact_name: devboy-tools-agent-usage
+            asset_name: devboy-tools-agent-usage-macos-arm64
           - os: windows-latest
             target: x86_64-pc-windows-msvc
-            artifact_name: devboy-agent-usage.exe
-            asset_name: devboy-agent-usage-windows-x86_64.exe
+            artifact_name: devboy-tools-agent-usage.exe
+            asset_name: devboy-tools-agent-usage-windows-x86_64.exe
 
     steps:
       - uses: actions/checkout@v4
@@ -188,10 +188,10 @@ jobs:
 
           # Map: artifact name -> npm package dir
           declare -A ARTIFACT_TO_PKG=(
-            ["devboy-agent-usage-linux-x86_64"]="agent-usage-linux-x64"
-            ["devboy-agent-usage-linux-arm64"]="agent-usage-linux-arm64"
-            ["devboy-agent-usage-macos-x86_64"]="agent-usage-darwin-x64"
-            ["devboy-agent-usage-macos-arm64"]="agent-usage-darwin-arm64"
+            ["devboy-tools-agent-usage-linux-x86_64"]="agent-usage-linux-x64"
+            ["devboy-tools-agent-usage-linux-arm64"]="agent-usage-linux-arm64"
+            ["devboy-tools-agent-usage-macos-x86_64"]="agent-usage-darwin-x64"
+            ["devboy-tools-agent-usage-macos-arm64"]="agent-usage-darwin-arm64"
           )
 
           # Unix platforms
@@ -200,7 +200,7 @@ jobs:
             mkdir -p "$pkg_dir/bin"
 
             tar -xzf "artifacts/$artifact/$artifact.tar.gz" -C "$pkg_dir/bin/"
-            chmod 755 "$pkg_dir/bin/devboy-agent-usage"
+            chmod 755 "$pkg_dir/bin/devboy-tools-agent-usage"
 
             jq --arg v "$VERSION" '.version = $v' "$pkg_dir/package.json" > "$pkg_dir/package.json.tmp"
             mv "$pkg_dir/package.json.tmp" "$pkg_dir/package.json"
@@ -209,7 +209,7 @@ jobs:
           # Windows
           WIN_PKG="npm/agent-usage-win32-x64"
           mkdir -p "$WIN_PKG/bin"
-          unzip -o "artifacts/devboy-agent-usage-windows-x86_64.exe/devboy-agent-usage-windows-x86_64.exe.zip" -d "$WIN_PKG/bin/"
+          unzip -o "artifacts/devboy-tools-agent-usage-windows-x86_64.exe/devboy-tools-agent-usage-windows-x86_64.exe.zip" -d "$WIN_PKG/bin/"
           jq --arg v "$VERSION" '.version = $v' "$WIN_PKG/package.json" > "$WIN_PKG/package.json.tmp"
           mv "$WIN_PKG/package.json.tmp" "$WIN_PKG/package.json"
 

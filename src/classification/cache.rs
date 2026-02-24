@@ -97,7 +97,7 @@ impl ClassificationCache {
     fn db_path() -> Result<PathBuf> {
         let cache_dir = dirs::cache_dir().context("Не удалось определить cache директорию")?;
         Ok(cache_dir
-            .join("devboy-agent-usage")
+            .join("devboy-tools-agent-usage")
             .join("classifications.db"))
     }
 

@@ -20,11 +20,11 @@ const child = spawn(binaryPath, process.argv.slice(2), {
 child.on("error", (err) => {
   if (err.code === "ENOENT") {
     console.error(
-      `devboy-agent-usage binary not found at: ${binaryPath}\n` +
+      `devboy-tools-agent-usage binary not found at: ${binaryPath}\n` +
         "Run 'npm rebuild @devboy-tools/agent-usage' or set DEVBOY_AGENT_USAGE_BINARY_PATH.",
     );
   } else {
-    console.error(`Failed to start devboy-agent-usage: ${err.message}`);
+    console.error(`Failed to start devboy-tools-agent-usage: ${err.message}`);
   }
   process.exit(1);
 });

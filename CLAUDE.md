@@ -52,7 +52,7 @@ cargo run -- tasks --from 2026-02-20 --with-llm  # запуск
 
 ## Кеш
 
-SQLite в `~/.cache/devboy-agent-usage/classifications.db`:
+SQLite в `~/.cache/devboy-tools-agent-usage/classifications.db`:
 - `turn_classifications` — классификация turns
 - `task_summaries` — суммаризация задач (title, summary, status)
 - `chunk_summaries` — промежуточные суммаризации (hierarchical)
