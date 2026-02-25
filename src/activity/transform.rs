@@ -311,8 +311,8 @@ mod tests {
     fn flood_window_same_data_small_gap() {
         // Два одинаковых события с gap 2s (< pulsetime 5s) → merge
         let events = vec![
-            win(0, 1.0, "Code", "main.rs"),  // 0..1
-            win(3, 1.0, "Code", "main.rs"),   // 3..4, gap=2s
+            win(0, 1.0, "Code", "main.rs"), // 0..1
+            win(3, 1.0, "Code", "main.rs"), // 3..4, gap=2s
         ];
         let result = flood_window(events, 5.0);
         assert_eq!(result.len(), 1);
@@ -324,11 +324,11 @@ mod tests {
     fn flood_window_same_data_chain() {
         // 5 одинаковых подряд с gap 1s → одно событие
         let events = vec![
-            win(0, 1.0, "Code", "main.rs"),   // 0..1
-            win(2, 1.0, "Code", "main.rs"),   // 2..3
-            win(4, 1.0, "Code", "main.rs"),   // 4..5
-            win(6, 1.0, "Code", "main.rs"),   // 6..7
-            win(8, 1.0, "Code", "main.rs"),   // 8..9
+            win(0, 1.0, "Code", "main.rs"), // 0..1
+            win(2, 1.0, "Code", "main.rs"), // 2..3
+            win(4, 1.0, "Code", "main.rs"), // 4..5
+            win(6, 1.0, "Code", "main.rs"), // 6..7
+            win(8, 1.0, "Code", "main.rs"), // 8..9
         ];
         let result = flood_window(events, 5.0);
         assert_eq!(result.len(), 1);
@@ -340,8 +340,8 @@ mod tests {
     fn flood_window_same_data_adjacent() {
         // gap == 0 → merge
         let events = vec![
-            win(0, 2.0, "Code", "main.rs"),   // 0..2
-            win(2, 3.0, "Code", "main.rs"),   // 2..5
+            win(0, 2.0, "Code", "main.rs"), // 0..2
+            win(2, 3.0, "Code", "main.rs"), // 2..5
         ];
         let result = flood_window(events, 5.0);
         assert_eq!(result.len(), 1);
@@ -352,7 +352,7 @@ mod tests {
     fn flood_window_different_data_small_gap() {
         // Два разных с gap 2s (< pulsetime 5s) → gap 50/50
         let events = vec![
-            win(0, 1.0, "Code", "main.rs"),     // 0..1
+            win(0, 1.0, "Code", "main.rs"),       // 0..1
             win(3, 1.0, "Firefox", "google.com"), // 3..4, gap=2s
         ];
         let result = flood_window(events, 5.0);
@@ -367,7 +367,7 @@ mod tests {
     fn flood_window_different_data_large_gap() {
         // gap >= pulsetime → без изменений
         let events = vec![
-            win(0, 1.0, "Code", "main.rs"),       // 0..1
+            win(0, 1.0, "Code", "main.rs"),        // 0..1
             win(10, 1.0, "Firefox", "google.com"), // 10..11, gap=9s
         ];
         let result = flood_window(events, 5.0);
@@ -380,9 +380,9 @@ mod tests {
     fn flood_window_mixed_aab() {
         // A, A, B → AA merged + B = 2 события
         let events = vec![
-            win(0, 1.0, "Code", "main.rs"),      // 0..1
+            win(0, 1.0, "Code", "main.rs"),       // 0..1
             win(2, 1.0, "Code", "main.rs"),       // 2..3, gap=1s → merge
-            win(5, 1.0, "Firefox", "google.com"),  // 5..6, gap=2s → 50/50
+            win(5, 1.0, "Firefox", "google.com"), // 5..6, gap=2s → 50/50
         ];
         let result = flood_window(events, 5.0);
         assert_eq!(result.len(), 2);
@@ -396,8 +396,8 @@ mod tests {
     fn flood_window_negative_gap_same_data() {
         // Перекрытие + одинаковые → merge
         let events = vec![
-            win(0, 3.0, "Code", "main.rs"),   // 0..3
-            win(2, 3.0, "Code", "main.rs"),   // 2..5, overlap=1s
+            win(0, 3.0, "Code", "main.rs"), // 0..3
+            win(2, 3.0, "Code", "main.rs"), // 2..5, overlap=1s
         ];
         let result = flood_window(events, 5.0);
         assert_eq!(result.len(), 1);
@@ -409,7 +409,7 @@ mod tests {
     fn flood_window_negative_gap_different_data() {
         // Перекрытие + разные → оставить как есть
         let events = vec![
-            win(0, 3.0, "Code", "main.rs"),      // 0..3
+            win(0, 3.0, "Code", "main.rs"),       // 0..3
             win(2, 3.0, "Firefox", "google.com"), // 2..5, overlap
         ];
         let result = flood_window(events, 5.0);
@@ -435,8 +435,8 @@ mod tests {
     fn flood_afk_merge_same_status() {
         // NotAfk + NotAfk с маленьким gap → merge
         let events = vec![
-            afk(0, 10.0, AfkStatus::NotAfk),   // 0..10
-            afk(12, 10.0, AfkStatus::NotAfk),  // 12..22, gap=2s
+            afk(0, 10.0, AfkStatus::NotAfk),  // 0..10
+            afk(12, 10.0, AfkStatus::NotAfk), // 12..22, gap=2s
         ];
         let result = flood_afk(events, 5.0);
         assert_eq!(result.len(), 1);
@@ -473,10 +473,7 @@ mod tests {
 
     #[test]
     fn extract_not_afk_all_afk() {
-        let events = vec![
-            afk(0, 10.0, AfkStatus::Afk),
-            afk(10, 20.0, AfkStatus::Afk),
-        ];
+        let events = vec![afk(0, 10.0, AfkStatus::Afk), afk(10, 20.0, AfkStatus::Afk)];
         let periods = extract_not_afk_periods(&events);
         assert!(periods.is_empty());
     }
@@ -492,19 +489,10 @@ mod tests {
         assert_eq!(periods.len(), 2);
         // Первый период: 0..10
         assert_eq!(periods[0].start, base_ts());
-        assert_eq!(
-            periods[0].end,
-            base_ts() + chrono::Duration::seconds(10)
-        );
+        assert_eq!(periods[0].end, base_ts() + chrono::Duration::seconds(10));
         // Второй период: 30..40
-        assert_eq!(
-            periods[1].start,
-            base_ts() + chrono::Duration::seconds(30)
-        );
-        assert_eq!(
-            periods[1].end,
-            base_ts() + chrono::Duration::seconds(40)
-        );
+        assert_eq!(periods[1].start, base_ts() + chrono::Duration::seconds(30));
+        assert_eq!(periods[1].end, base_ts() + chrono::Duration::seconds(40));
     }
 
     // ==================== filter_period_intersect ====================
@@ -607,10 +595,10 @@ mod tests {
     #[test]
     fn filter_intersect_multiple_events_one_period() {
         let events = vec![
-            win(0, 5.0, "Code", "main.rs"),      // 0..5 — вне периода
-            win(8, 5.0, "Code", "main.rs"),      // 8..13 — частично
+            win(0, 5.0, "Code", "main.rs"),        // 0..5 — вне периода
+            win(8, 5.0, "Code", "main.rs"),        // 8..13 — частично
             win(15, 3.0, "Firefox", "google.com"), // 15..18 — полностью внутри
-            win(25, 5.0, "Code", "main.rs"),     // 25..30 — вне периода
+            win(25, 5.0, "Code", "main.rs"),       // 25..30 — вне периода
         ];
         let periods = vec![TimePeriod {
             start: base_ts() + chrono::Duration::seconds(10),
@@ -655,9 +643,9 @@ mod tests {
         }
 
         let afk_events = vec![
-            afk(0, 300.0, AfkStatus::NotAfk),    // 0..300
-            afk(300, 300.0, AfkStatus::Afk),      // 300..600
-            afk(600, 600.0, AfkStatus::NotAfk),   // 600..1200
+            afk(0, 300.0, AfkStatus::NotAfk),   // 0..300
+            afk(300, 300.0, AfkStatus::Afk),    // 300..600
+            afk(600, 600.0, AfkStatus::NotAfk), // 600..1200
         ];
 
         let (active, flooded_win, flooded_afk_result) =

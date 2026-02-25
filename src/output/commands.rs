@@ -337,8 +337,7 @@ pub fn focus(
     // Загружаем ActivityWatch данные один раз и flood
     let raw_window =
         db::load_window_events(&config.activitywatch_db_path, Some(from_dt), Some(to_dt))?;
-    let raw_afk =
-        db::load_afk_events(&config.activitywatch_db_path, Some(from_dt), Some(to_dt))?;
+    let raw_afk = db::load_afk_events(&config.activitywatch_db_path, Some(from_dt), Some(to_dt))?;
     let window_events = transform::flood_window(raw_window, transform::DEFAULT_PULSETIME);
     let afk_events = transform::flood_afk(raw_afk, transform::DEFAULT_PULSETIME);
 
@@ -446,7 +445,8 @@ pub fn timeline(config: &Config, id: &str) -> Result<()> {
     let to_dt = sorted_sessions.iter().map(|s| s.end_time).max().unwrap();
 
     let (window_events, afk_events) = if config.has_activitywatch() {
-        let raw_w = db::load_window_events(&config.activitywatch_db_path, Some(from_dt), Some(to_dt))?;
+        let raw_w =
+            db::load_window_events(&config.activitywatch_db_path, Some(from_dt), Some(to_dt))?;
         let raw_a = db::load_afk_events(&config.activitywatch_db_path, Some(from_dt), Some(to_dt))?;
         let w = transform::flood_window(raw_w, transform::DEFAULT_PULSETIME);
         let a = transform::flood_afk(raw_a, transform::DEFAULT_PULSETIME);
@@ -542,8 +542,11 @@ pub fn browse(config: &Config, session_id: &str, format: &OutputFormat) -> Resul
     }
 
     // Flood + filter_period_intersect pipeline
-    let (active_window, flooded_window, flooded_afk) =
-        transform::preprocess_active_window_events(raw_window, raw_afk, transform::DEFAULT_PULSETIME);
+    let (active_window, flooded_window, flooded_afk) = transform::preprocess_active_window_events(
+        raw_window,
+        raw_afk,
+        transform::DEFAULT_PULSETIME,
+    );
 
     // Browse stats: только активное время (пересечение с not-afk)
     let browse_stats =
